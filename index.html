@@ -417,7 +417,16 @@
       localStorage.setItem('kitabVideoDetailedProgress', JSON.stringify(data));
     }
 
-    google.script.run.withSuccessHandler(initDashboard).ambilDataKitab();
+    // Tarik data dari Google Apps Script menggunakan fetch
+    fetch('https://script.google.com/macros/s/AKfycbw5sIhymQMCuM2abI12dAuqGL7c9HiK3FRmCqsiXIgIEMhAnAKwwX3zgTaw4bu6yW5VEQ/exec')
+      .then(response => response.json())
+      .then(rows => {
+        initDashboard(rows);
+      })
+      .catch(error => {
+        console.error('Ralat:', error);
+        document.getElementById('grid-container').innerHTML = '<div style="color:#aaa; grid-column: 1/-1;">Gagal memuat turun data dari Google Sheet.</div>';
+      });
 
     function initDashboard(rows) {
       if (!rows || rows.length === 0) {
@@ -588,7 +597,6 @@
       var allProgress = getVideoProgressData();
       var savedTime = (allProgress[videoId] && allProgress[videoId].currentTime) ? allProgress[videoId].currentTime : 0;
 
-      // Jika video sudah hampir habis (95% ke atas), tetapkan semula ke 0 supaya boleh ulang dari awal jika mahu
       if (allProgress[videoId] && (allProgress[videoId].completed || allProgress[videoId].percent >= 95)) {
         savedTime = 0;
       }
@@ -602,7 +610,7 @@
             'autoplay': 1,
             'modestbranding': 1,
             'rel': 0,
-            'start': Math.floor(savedTime) // Sambung dari saat terakhir disimpan
+            'start': Math.floor(savedTime)
           },
           events: {
             'onStateChange': onPlayerStateChange
@@ -611,7 +619,7 @@
       } else {
         ytPlayer.loadVideoById({
           videoId: videoId,
-          startSeconds: Math.floor(savedTime) // Sambung dari saat terakhir disimpan
+          startSeconds: Math.floor(savedTime)
         });
       }
 
@@ -641,7 +649,6 @@
               allProgress[currentVideoId] = { percent: 0, completed: false, currentTime: 0 };
             }
 
-            // Simpan saat semasa (current time) dan peratusan tertinggi
             allProgress[currentVideoId].currentTime = currentTime;
             if (percent > allProgress[currentVideoId].percent) {
               allProgress[currentVideoId].percent = percent;
@@ -655,7 +662,7 @@
             saveVideoProgressData(allProgress);
           }
         }
-      }, 3000); // Kemaskini setiap 3 saat
+      }, 3000);
     }
 
     function showHome() {

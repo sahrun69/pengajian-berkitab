@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0;
+      padding: 0;
+    }
+    
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #0f0f12; 
+      color: #e0e0e0; 
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(24, 24, 28, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 14px 24px;
+      border-bottom: 1px solid #22222a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, #ffd700, #ff9900);
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    h1.app-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .visitor-badge {
+      font-size: 0.75rem;
+      color: #aaa;
+      background: #181820;
+      border: 1px solid #2d2d3a;
+      padding: 5px 10px;
+      border-radius: 15px;
+    }
+
+    .visitor-count {
+      color: #ffd700;
+      font-weight: bold;
+    }
+
+    .btn-back {
+      background: #282830;
+      color: #fff;
+      border: 1px solid #3a3a45;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-back:hover {
+      background: #383845;
+      border-color: #ffd700;
+      color: #ffd700;
+    }
+
+    /* HALAMAN UTAMA */
+    #home-view {
+      padding: 20px 24px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .search-container {
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 18px;
+      background: #181820;
+      border: 1px solid #2d2d3a;
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: #ffd700;
+    }
+
+    /* GRID DESKTOP (3-5 KOLUM AUTO) */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .kitab-card {
+      background: #181820;
+      border: 1px solid #252532;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .kitab-card:hover {
+      transform: translateY(-4px);
+      border-color: #ffd700;
+    }
+
+    .card-thumb-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* Nisbah 16:9 Kompak */
+      background: #121218;
+      overflow: hidden;
+    }
+
+    .card-thumb {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    .card-body {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .card-ustaz {
+      font-size: 0.72rem;
+      color: #ffd700;
+      font-weight: 600;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+
+    .card-badge {
+      font-size: 0.7rem;
+      color: #a0a0b0;
+      background: #22222c;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    /* HALAMAN PLAYER */
+    #watch-view {
+      display: none;
+      flex-direction: row;
+      overflow: hidden;
+    }
+
+    #main-player { 
+      flex: 3; 
+      padding: 20px; 
+      display: flex; 
+      flex-direction: column; 
+      background: #121218; 
+      overflow-y: auto;
+    }
+    
+    .iframe-container { 
+      position: relative; 
+      width: 100%; 
+      padding-bottom: 56.25%; 
+      height: 0; 
+      background: #000;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    #youtube-player { 
+      position: absolute; 
+      top: 0; left: 0; 
+      width: 100%; height: 100%; 
+      border: none; 
+    }
+    
+    #playing-title { 
+      margin-top: 14px; 
+      font-size: 1.05rem; 
+      color: #f3e5ab; 
+      font-weight: 600; 
+    }
+
+    #playlist { 
+      flex: 1.2; 
+      background: #181820; 
+      overflow-y: auto; 
+      padding: 16px; 
+      border-left: 1px solid #252532; 
+      min-width: 300px;
+    }
+    
+    h2.sidebar-header { 
+      font-size: 1rem; 
+      margin-bottom: 14px; 
+      padding-bottom: 10px; 
+      border-bottom: 1px solid #2a2a38; 
+      color: #ffd700; 
+    }
+    
+    .ep-item { 
+      padding: 12px; 
+      border: 1px solid #22222e;
+      background: #121218;
+      cursor: pointer; 
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .ep-item.active {
+      background: rgba(254, 240, 138, 0.08);
+      border-color: #f3e5ab;
+    }
+
+    .ep-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .ep-name { 
+      font-weight: 600; 
+      font-size: 0.88rem; 
+      color: #ffffff;
+    }
+    
+    .ep-item.active .ep-name { color: #f3e5ab; }
+    .ep-desc { font-size: 0.78rem; color: #808090; }
+
+    .ep-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      margin-top: 2px;
+    }
+
+    /* STATUS BADGE & PERATUSAN */
+    .status-badge {
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .status-belum {
+      background: #2a2a36;
+      color: #9e9ea8;
+    }
+    .status-selesai {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .ep-percent {
+      color: #ffd700;
+      font-weight: 600;
+    }
+
+    /* PENYESUAIAN KHAS UNTUK TELEFON */
+    @media screen and (max-width: 768px) {
+      header { padding: 10px 14px; }
+      #home-view { padding: 12px 10px; }
+      .search-container { margin-bottom: 12px; }
+      .search-input { padding: 10px 14px; font-size: 0.85rem; border-radius: 8px; }
+      
+      .grid-container {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+      }
+
+      .card-body { padding: 8px 10px 10px 10px; }
+      .card-title { font-size: 0.82rem; margin-bottom: 6px; }
+      .card-ustaz { font-size: 0.65rem; }
+      .card-badge { font-size: 0.65rem; padding: 2px 6px; }
+
+      #watch-view { flex-direction: column; height: auto; overflow: visible; }
+      #main-player { position: sticky; top: 55px; z-index: 100; padding: 8px; background: #0f0f12; }
+      #playlist { width: 100%; border-left: none; padding: 12px; }
+    }
+  </style>
+
+  <!-- YouTube IFrame Player API Script -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="brand-logo">
+      <div class="brand-icon">📚</div>
+      <h1 class="app-title">Portal Kitab</h1>
+    </div>
+    
+    <div class="header-right">
+      <div class="visitor-badge">Pelawat: <span id="visitor-count" class="visitor-count">...</span></div>
+      <button id="btn-back" class="btn-back" style="display:none;" onclick="showHome()">
+        <span>⬅</span> Senarai Kitab
+      </button>
+    </div>
+  </header>
+
+  <!-- HALAMAN UTAMA -->
+  <div id="home-view">
+    <div class="search-container">
+      <input type="text" id="search-bar" class="search-input" placeholder="Cari tajuk kitab atau nama ustaz..." onkeyup="filterKitab()">
+    </div>
+    <div id="grid-container" class="grid-container">Memuat turun data...</div>
+  </div>
+
+  <!-- HALAMAN PLAYER -->
+  <div id="watch-view">
+    <div id="main-player">
+      <div class="iframe-container">
+        <div id="youtube-player"></div>
+      </div>
+      <div id="playing-title">Loading...</div>
+    </div>
+
+    <div id="playlist">
+      <h2 id="current-kitab-header" class="sidebar-header">Senarai Episod</h2>
+      <div id="episodes-list"></div>
+    </div>
+  </div>
+
+  <script>
+    var globalKitabData = {};
+    var fallbackImage = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80";
+    var isDataLoaded = false;
+    var currentActiveKey = null;
+    var currentVideoId = null;
+
+    var ytPlayer = null;
+    var progressInterval = null;
+
+    function extractYouTubeId(urlOrId) {
+      if (!urlOrId) return '';
+      var str = urlOrId.toString().trim();
+      var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      var match = str.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : str;
+    }
+
+    function getVideoProgressData() {
+      try {
+        var data = localStorage.getItem('kitabVideoDetailedProgress');
+        return data ? JSON.parse(data) : {};
+      } catch(e) {
+        return {};
+      }
+    }
+
+    function saveVideoProgressData(data) {
+      localStorage.setItem('kitabVideoDetailedProgress', JSON.stringify(data));
+    }
+
+    google.script.run.withSuccessHandler(initDashboard).ambilDataKitab();
+
+    function initDashboard(rows) {
+      if (!rows || rows.length === 0) {
+        document.getElementById('grid-container').innerHTML = '<div style="color:#aaa; grid-column: 1/-1;">Tiada data kitab dijumpai.</div>';
+        return;
+      }
+
+      globalKitabData = {};
+
+      rows.forEach(function(row) {
+        var rawId = row[0];
+        var namaKitab = row[1];
+        var namaUstaz = row[2] || '';
+        var episod = row[3];
+        var nota = row[4];
+        var imageCover = row[5]; 
+
+        var cleanVideoId = extractYouTubeId(rawId);
+        if (!cleanVideoId) return;
+
+        var key = namaKitab + (namaUstaz ? ' - ' + namaUstaz : '');
+
+        if (!globalKitabData[key]) {
+          globalKitabData[key] = {
+            title: namaKitab,
+            ustaz: namaUstaz,
+            cover: imageCover && imageCover.toString().trim() !== "" ? imageCover.toString().trim() : fallbackImage,
+            episodes: []
+          };
+        }
+
+        if (imageCover && imageCover.toString().trim() !== "") {
+          globalKitabData[key].cover = imageCover.toString().trim();
+        }
+
+        globalKitabData[key].episodes.push({ id: cleanVideoId, ep: episod, nota: nota });
+      });
+
+      isDataLoaded = true;
+      renderGrid(globalKitabData);
+      checkInitialRoute();
+    }
+
+    function renderGrid(dataObj) {
+      var gridContainer = document.getElementById('grid-container');
+      gridContainer.innerHTML = '';
+
+      var keys = Object.keys(dataObj);
+      if (keys.length === 0) {
+        gridContainer.innerHTML = '<div style="color:#aaa; grid-column: 1/-1;">Tiada kitab ditemui.</div>';
+        return;
+      }
+
+      keys.forEach(function(key) {
+        var item = dataObj[key];
+        var card = document.createElement('div');
+        card.className = 'kitab-card';
+
+        card.innerHTML = 
+          '<div class="card-thumb-container">' +
+            '<img class="card-thumb" src="' + item.cover + '" alt="' + item.title + '" onerror="this.src=\'' + fallbackImage + '\';">' +
+          '</div>' +
+          '<div class="card-body">' +
+            (item.ustaz ? '<div class="card-ustaz">' + item.ustaz + '</div>' : '') +
+            '<div class="card-title">' + item.title + '</div>' +
+            '<div class="card-meta">' +
+              '<span class="card-badge">' + item.episodes.length + ' Episod</span>' +
+            '</div>' +
+          '</div>';
+
+        card.onclick = function() { 
+          openKitabPlayer(key, true); 
+        };
+        gridContainer.appendChild(card);
+      });
+    }
+
+    function filterKitab() {
+      var query = document.getElementById('search-bar').value.toLowerCase();
+      var filtered = {};
+
+      Object.keys(globalKitabData).forEach(function(key) {
+        var item = globalKitabData[key];
+        var matchTitle = item.title.toLowerCase().indexOf(query) > -1;
+        var matchUstaz = item.ustaz.toLowerCase().indexOf(query) > -1;
+
+        if (matchTitle || matchUstaz) {
+          filtered[key] = item;
+        }
+      });
+
+      renderGrid(filtered);
+    }
+
+    function openKitabPlayer(key, updateHistory) {
+      if (!globalKitabData[key]) return;
+      currentActiveKey = key;
+
+      document.getElementById('home-view').style.display = 'none';
+      document.getElementById('watch-view').style.display = 'flex';
+      document.getElementById('btn-back').style.display = 'flex';
+
+      localStorage.setItem('lastActiveKitab', key);
+      if (updateHistory) {
+        window.location.hash = encodeURIComponent(key);
+      }
+
+      var item = globalKitabData[key];
+      document.getElementById('current-kitab-header').innerText = '📖 ' + item.title;
+
+      renderEpisodesList(key, 0);
+    }
+
+    function renderEpisodesList(key, selectedIndex) {
+      var item = globalKitabData[key];
+      var epListContainer = document.getElementById('episodes-list');
+      epListContainer.innerHTML = '';
+
+      var allProgress = getVideoProgressData();
+
+      item.episodes.forEach(function(epItem, index) {
+        var vidProg = allProgress[epItem.id] || { percent: 0, completed: false, currentTime: 0 };
+        var isSelesai = vidProg.completed || vidProg.percent >= 95;
+        var percentVal = isSelesai ? 100 : Math.round(vidProg.percent || 0);
+
+        var statusText = isSelesai ? 'Selesai' : 'Belum Mula';
+        var statusClass = isSelesai ? 'status-selesai' : 'status-belum';
+
+        var epDiv = document.createElement('div');
+        epDiv.className = 'ep-item' + (index === selectedIndex ? ' active' : '');
+        epDiv.innerHTML = 
+          '<div class="ep-top-row">' +
+            '<div class="ep-name">' + epItem.ep + '</div>' +
+            '<span class="status-badge ' + statusClass + '">' + statusText + '</span>' +
+          '</div>' +
+          (epItem.nota ? '<div class="ep-desc">' + epItem.nota + '</div>' : '') +
+          '<div class="ep-meta-row">' +
+            '<span class="ep-desc">Kemajuan:</span>' +
+            '<span class="ep-percent">' + percentVal + '%</span>' +
+          '</div>';
+
+        epDiv.onclick = function() {
+          var allItems = document.querySelectorAll('.ep-item');
+          allItems.forEach(function(el) { el.classList.remove('active'); });
+          epDiv.classList.add('active');
+
+          var tajukPenuh = item.title + ' - ' + epItem.ep + (epItem.nota ? ' (' + epItem.nota + ')' : '');
+          loadAndPlayVideo(epItem.id, tajukPenuh);
+        };
+
+        epListContainer.appendChild(epDiv);
+
+        if (index === selectedIndex) {
+          var tajukAwal = item.title + ' - ' + epItem.ep + (epItem.nota ? ' (' + epItem.nota + ')' : '');
+          loadAndPlayVideo(epItem.id, tajukAwal);
+        }
+      });
+    }
+
+    function onYouTubeIframeAPIReady() {
+      // API siap sedia
+    }
+
+    function loadAndPlayVideo(videoId, fullTitle) {
+      currentVideoId = videoId;
+      document.getElementById('playing-title').innerText = '▶ ' + fullTitle;
+
+      var allProgress = getVideoProgressData();
+      var savedTime = (allProgress[videoId] && allProgress[videoId].currentTime) ? allProgress[videoId].currentTime : 0;
+
+      // Jika video sudah hampir habis (95% ke atas), tetapkan semula ke 0 supaya boleh ulang dari awal jika mahu
+      if (allProgress[videoId] && (allProgress[videoId].completed || allProgress[videoId].percent >= 95)) {
+        savedTime = 0;
+      }
+
+      if (!ytPlayer) {
+        ytPlayer = new YT.Player('youtube-player', {
+          height: '100%',
+          width: '100%',
+          videoId: videoId,
+          playerVars: {
+            'autoplay': 1,
+            'modestbranding': 1,
+            'rel': 0,
+            'start': Math.floor(savedTime) // Sambung dari saat terakhir disimpan
+          },
+          events: {
+            'onStateChange': onPlayerStateChange
+          }
+        });
+      } else {
+        ytPlayer.loadVideoById({
+          videoId: videoId,
+          startSeconds: Math.floor(savedTime) // Sambung dari saat terakhir disimpan
+        });
+      }
+
+      startTrackingProgress();
+    }
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        startTrackingProgress();
+      }
+    }
+
+    function startTrackingProgress() {
+      if (progressInterval) clearInterval(progressInterval);
+
+      progressInterval = setInterval(function() {
+        if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function' && typeof ytPlayer.getDuration === 'function') {
+          var currentTime = ytPlayer.getCurrentTime();
+          var duration = ytPlayer.getDuration();
+
+          if (duration > 0 && currentVideoId) {
+            var percent = (currentTime / duration) * 100;
+            if (percent > 100) percent = 100;
+
+            var allProgress = getVideoProgressData();
+            if (!allProgress[currentVideoId]) {
+              allProgress[currentVideoId] = { percent: 0, completed: false, currentTime: 0 };
+            }
+
+            // Simpan saat semasa (current time) dan peratusan tertinggi
+            allProgress[currentVideoId].currentTime = currentTime;
+            if (percent > allProgress[currentVideoId].percent) {
+              allProgress[currentVideoId].percent = percent;
+            }
+
+            if (percent >= 95) {
+              allProgress[currentVideoId].completed = true;
+              allProgress[currentVideoId].percent = 100;
+            }
+
+            saveVideoProgressData(allProgress);
+          }
+        }
+      }, 3000); // Kemaskini setiap 3 saat
+    }
+
+    function showHome() {
+      if (progressInterval) clearInterval(progressInterval);
+      if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+        ytPlayer.stopVideo();
+      }
+
+      document.getElementById('watch-view').style.display = 'none';
+      document.getElementById('home-view').style.display = 'block';
+      document.getElementById('btn-back').style.display = 'none';
+      
+      currentActiveKey = null;
+      currentVideoId = null;
+      localStorage.removeItem('lastActiveKitab');
+      history.pushState("", document.title, window.location.pathname + window.location.search);
+      
+      renderGrid(globalKitabData);
+    }
+
+    function checkInitialRoute() {
+      if (!isDataLoaded) return;
+      
+      var hashKey = window.location.hash ? decodeURIComponent(window.location.hash.replace('#', '')) : null;
+      var savedKey = localStorage.getItem('lastActiveKitab');
+
+      var targetKey = hashKey || savedKey;
+
+      if (targetKey && globalKitabData[targetKey]) {
+        openKitabPlayer(targetKey, false);
+      }
+    }
+
+    window.addEventListener('hashchange', function() {
+      var hashKey = window.location.hash ? decodeURIComponent(window.location.hash.replace('#', '')) : null;
+      if (hashKey && globalKitabData[hashKey]) {
+        if (currentActiveKey !== hashKey) {
+          openKitabPlayer(hashKey, false);
+        }
+      } else {
+        showHome();
+      }
+    });
+
+    // Skrip Pelawat (CountAPI)
+    fetch('https://countapi.mileshilliard.com/api/v1/hit/portal-kitab-unik-anda-2026')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('visitor-count').innerText = data.value;
+      })
+      .catch(error => {
+        document.getElementById('visitor-count').innerText = '1+';
+      });
+  </script>
+</body>
+</html>
